@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Registro de Fotos (Cloudinary + localStorage)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; }
+    label { display: block; margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Registro de Fotos</h1>
+  <label>Fornecedor: <input type="text" id="fornecedor" required></label>
+  <label>Data: <input type="date" id="data" required></label>
+  <button id="upload-btn">Tirar/Fazer upload da foto</button>
+
+  <script>
+    const cloudName = 'domf2kvw6';
+    const uploadPreset = 'registro_prazo';
+
+    // Cria widget Cloudinary
+    const widget = cloudinary.createUploadWidget({
+      cloudName, uploadPreset, multiple: false, showCompletedButton: true
+    }, (error, result) => {
+      if (error) {
+        console.error('Erro:', error);
+        alert('Erro no upload: ' + error.message);
+      } else if (result && result.event === 'success') {
+        const url = result.info.secure_url;
+        const fornecedor = document.getElementById('fornecedor').value.trim();
+        const data = document.getElementById('data').value;
+        // Armazena no localStorage
+        const photos = JSON.parse(localStorage.getItem('photos') || '[]');
+        photos.push({ url, fornecedor, data });
+        localStorage.setItem('photos', JSON.stringify(photos));
+        alert('Enviado! URL:\n' + url + '\nE salvo no cache local.');
+      }
+    });
+
+    document.getElementById('upload-btn').addEventListener('click', () => {
+      const fornecedor = document.getElementById('fornecedor').value.trim();
+      const data = document.getElementById('data').value;
+      if (!fornecedor || !data) {
+        return alert('Preencha ambos os campos!');
+      }
+      widget.open();
+    });
+  </script>
+</body>
+</html>
