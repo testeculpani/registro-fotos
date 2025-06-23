@@ -16,31 +16,42 @@
   <script>
     // Seu cloud name do Cloudinary
     const cloudName = 'domf2kvw6';
-    // Substitua pelo nome do seu upload preset (Unsigned)
+    // Nome do seu upload preset (Unsigned)
     const uploadPreset = 'registro_prazo';
+
     const widget = cloudinary.createUploadWidget(
       {
         cloudName: cloudName,
         uploadPreset: uploadPreset,
         multiple: false,
-        folder: '',
         showCompletedButton: true
       },
       (error, result) => {
-        if (!error && result && result.event === 'success') {
-          alert('Enviado! URL:\n' + result.info.secure_url);
+        if (error) {
+          console.error('Erro no upload:', error);
+          alert('Erro no upload: ' + error.message);
+        } else if (result && result.event === 'success') {
           console.log('Upload info:', result.info);
+          alert(
+            'Enviado!\nURL: ' + result.info.secure_url +
+            '\nTag: ' + (result.info.tags.length ? result.info.tags[0] : 'sem tag')
+          );
         }
       }
     );
 
     document.getElementById('upload-btn').addEventListener('click', () => {
-      const fornecedor = document.getElementById('fornecedor').value.trim();
-      const data = document.getElementById('data').value;
-      if (!fornecedor || !data) {
+      const fornecedorInput = document.getElementById('fornecedor').value.trim();
+      const dataInput = document.getElementById('data').value;
+      if (!fornecedorInput || !dataInput) {
         return alert('Preencha Fornecedor e Data antes.');
       }
-      widget.update({ folder: `${fornecedor}/${data}` });
+      // Normaliza o fornecedor para a pasta e tag
+      const tag = fornecedorInput.toLowerCase();
+      widget.update({
+        folder: `${tag}/${dataInput}`,
+        tags: [tag]
+      });
       widget.open();
     });
   </script>
