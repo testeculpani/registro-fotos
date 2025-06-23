@@ -14,7 +14,7 @@
   <h1>Galeria de Fotos</h1>
   <label>
     Fornecedor:
-    <input type="text" id="fornecedor" placeholder="Ex: FornecedorX" />
+    <input type="text" id="fornecedor" placeholder="Ex: fornecedorx" />
     <button id="load">Carregar Fotos</button>
   </label>
   <div id="gallery" class="grid"></div>
@@ -24,11 +24,12 @@
 
     document.getElementById('load').addEventListener('click', () => {
       const fornecedorInput = document.getElementById('fornecedor').value.trim();
-      if (!fornecedorInput) return alert('Digite o fornecedor antes.');
-      // Normaliza para lowercase para coincidir com a tag enviada
+      if (!fornecedorInput) {
+        return alert('Digite o fornecedor antes.');
+      }
       const tag = fornecedorInput.toLowerCase();
-
-      fetch(`https://res.cloudinary.com/${cloudName}/image/list/${encodeURIComponent(tag)}.json`)
+      const url = `https://res.cloudinary.com/${cloudName}/image/list/${encodeURIComponent(tag)}.json`;
+      fetch(url)
         .then(res => {
           if (!res.ok) throw new Error('Nenhuma imagem encontrada para "' + fornecedorInput + '"');
           return res.json();
@@ -37,9 +38,9 @@
           const gallery = document.getElementById('gallery');
           gallery.innerHTML = '';
           data.resources.forEach(r => {
-            const url = `https://res.cloudinary.com/${cloudName}/image/upload/${r.public_id}.${r.format}`;
+            const imgUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${r.public_id}.${r.format}`;
             const img = document.createElement('img');
-            img.src = url;
+            img.src = imgUrl;
             img.alt = r.public_id;
             gallery.appendChild(img);
           });
