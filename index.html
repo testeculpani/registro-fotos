@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Registro de Fotos (Cloudinary)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Cloudinary Upload Widget -->
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+</head>
+<body>
+  <h1>Registro de Fotos por Fornecedor</h1>
+  <label>Fornecedor:<input type="text" id="fornecedor" required></label><br>
+  <label>Data:<input type="date" id="data" required></label><br>
+  <button id="upload-btn">Tirar/Fazer upload da foto</button>
+
+  <script>
+    // Seu cloud name do Cloudinary
+    const cloudName = 'domf2kvw6';
+    // Substitua pelo nome do seu upload preset (Unsigned)
+    const uploadPreset = 'registro_prazo';
+    const widget = cloudinary.createUploadWidget(
+      {
+        cloudName: cloudName,
+        uploadPreset: uploadPreset,
+        multiple: false,
+        folder: '',
+        showCompletedButton: true
+      },
+      (error, result) => {
+        if (!error && result && result.event === 'success') {
+          alert('Enviado! URL:\n' + result.info.secure_url);
+          console.log('Upload info:', result.info);
+        }
+      }
+    );
+
+    document.getElementById('upload-btn').addEventListener('click', () => {
+      const fornecedor = document.getElementById('fornecedor').value.trim();
+      const data = document.getElementById('data').value;
+      if (!fornecedor || !data) {
+        return alert('Preencha Fornecedor e Data antes.');
+      }
+      widget.update({ folder: `${fornecedor}/${data}` });
+      widget.open();
+    });
+  </script>
+</body>
+</html>
