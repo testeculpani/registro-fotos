@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <title>Registro de Fotos (Cloudinary)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Cloudinary Upload Widget -->
   <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
 </head>
 <body>
@@ -12,33 +11,27 @@
   <label>Fornecedor:<input type="text" id="fornecedor" required></label><br>
   <label>Data:<input type="date" id="data" required></label><br>
   <button id="upload-btn">Tirar/Fazer upload da foto</button>
-
   <script>
-    // Seu cloud name do Cloudinary
     const cloudName = 'domf2kvw6';
-    // Nome do seu upload preset (Unsigned)
     const uploadPreset = 'registro_prazo';
 
-    const widget = cloudinary.createUploadWidget(
-      {
-        cloudName: cloudName,
-        uploadPreset: uploadPreset,
-        multiple: false,
-        showCompletedButton: true
-      },
-      (error, result) => {
-        if (error) {
-          console.error('Erro no upload:', error);
-          alert('Erro no upload: ' + error.message);
-        } else if (result && result.event === 'success') {
-          console.log('Upload info:', result.info);
-          alert(
-            'Enviado!\nURL: ' + result.info.secure_url +
-            '\nTag: ' + (result.info.tags.length ? result.info.tags[0] : 'sem tag')
-          );
-        }
+    const widget = cloudinary.createUploadWidget({
+      cloudName: cloudName,
+      uploadPreset: uploadPreset,
+      multiple: false,
+      showCompletedButton: true
+    }, (error, result) => {
+      if (error) {
+        console.error('Erro no upload:', error);
+        alert('Erro no upload: ' + error.message);
+      } else if (result && result.event === 'success') {
+        console.log('Upload info:', result.info);
+        alert(
+          'Enviado!\nURL: ' + result.info.secure_url +
+          '\nTag: ' + result.info.tags[0]
+        );
       }
-    );
+    });
 
     document.getElementById('upload-btn').addEventListener('click', () => {
       const fornecedorInput = document.getElementById('fornecedor').value.trim();
@@ -46,7 +39,6 @@
       if (!fornecedorInput || !dataInput) {
         return alert('Preencha Fornecedor e Data antes.');
       }
-      // Normaliza o fornecedor para a pasta e tag
       const tag = fornecedorInput.toLowerCase();
       widget.update({
         folder: `${tag}/${dataInput}`,
