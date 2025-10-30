@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Fotos</title>
+  <!-- Cloudinary Upload Widget -->
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f0f2f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+    label {
+      font-size: 1rem;
+      color: #555;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      border-color: #3b82f6;
+      outline: none;
+    }
+    #upload-btn {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1.1rem;
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+    #upload-btn:hover { background: #2563eb; }
+    #upload-btn:active { background: #1e40af; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Registro de Fotos</h1>
+    <div class="form-group">
+      <label for="fornecedor">Fornecedor</label>
+      <input type="text" id="fornecedor" placeholder="Ex: fornecedorx" required>
+    </div>
+    <button id="upload-btn">Tirar/Fazer foto</button>
+  </div>
+
+  <script>
+    const cloudName = 'domf2kvw6';
+    const uploadPreset = 'registro_prazo';
+    const widget = cloudinary.createUploadWidget(
+      { cloudName, uploadPreset, multiple: false, showCompletedButton: true },
+      (err, result) => {
+        if (err) {
+          console.error('Erro no upload:', err);
+          alert('Erro: ' + err.message);
+        } else if (result && result.event === 'success') {
+          alert('Foto enviada com sucesso!\nURL:\n' + result.info.secure_url);
+        }
+      }
+    );
+    document.getElementById('upload-btn').addEventListener('click', () => {
+      const fornecedor = document.getElementById('fornecedor').value.trim().toLowerCase();
+      if (!fornecedor) {
+        return alert('Por favor, preencha o Fornecedor.');
+      }
+      widget.update({ folder: fornecedor });
+      widget.open();
+    });
+  </script>
+</body>
+</html>
